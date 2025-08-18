@@ -17,6 +17,7 @@ env/
 
 # Data
 corpus.txt
+*.json
 
 # IDE
 .vscode/
