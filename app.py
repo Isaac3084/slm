@@ -13,18 +13,24 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = SmallLanguageModel(config).to(device)
 enc = tiktoken.get_encoding("gpt2")
 
-checkpoint_path = f"slm_epoch_{config.epochs}.pt"
+checkpoint_path = f"slm_chat_epoch_3.pt"
+fallback_path = f"slm_epoch_10.pt"
+
 if os.path.exists(checkpoint_path):
     state = torch.load(checkpoint_path, map_location=device, weights_only=True)
-    # Filter out keys with shape mismatches (e.g. positional embeddings after context window upgrade)
+    model.load_state_dict(state)
+    print(f"Loaded CHAT model weights from {checkpoint_path}")
+elif os.path.exists(fallback_path):
+    state = torch.load(fallback_path, map_location=device, weights_only=True)
+    # Filter out keys with shape mismatches
     model_state = model.state_dict()
     filtered = {k: v for k, v in state.items() if k in model_state and v.shape == model_state[k].shape}
     skipped = [k for k in state if k not in filtered]
     model.load_state_dict(filtered, strict=False)
     if skipped:
-        print(f"Loaded weights (partial) — skipped {skipped} due to shape mismatch. Retrain needed.")
+        print(f"Loaded base weights (partial) — skipped {skipped} due to shape mismatch. Retrain needed.")
     else:
-        print(f"Loaded weights from {checkpoint_path}")
+        print(f"Loaded BASE weights from {fallback_path}")
 else:
     print("Warning: No trained weights found. Using random weights.")
 
