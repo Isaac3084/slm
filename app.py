@@ -96,5 +96,37 @@ def chat():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+from flask import Response, stream_with_context
+
+@app.route('/api/chat_stream', methods=['POST'])
+def chat_stream():
+    data = request.json
+    message = data.get('message', '')
+    if not message:
+        return jsonify({'error': 'Message is required'}), 400
+        
+    chat_prompt = f"Human: {message}\nAssistant:"
+    encoded = enc.encode(chat_prompt)
+    x = torch.tensor(encoded, dtype=torch.long).unsqueeze(0).to(device)
+    
+    def generate():
+        with torch.no_grad():
+            # keep track of generated text to handle stopping criteria
+            generated_text = ""
+            for next_token in model.generate_stream(x, max_new_tokens=150, temperature=0.7, top_k=50):
+                word = enc.decode([next_token.item()])
+                generated_text += word
+                
+                # If model generates next "Human:", stop
+                if "Human:" in generated_text:
+                    word = word.replace("Human:", "").replace("Huma", "").replace("Hum", "") # basic trim
+                    yield f"data: {json.dumps({'text': word, 'done': True})}\n\n"
+                    break
+                    
+                yield f"data: {json.dumps({'text': word, 'done': False})}\n\n"
+            yield f"data: {json.dumps({'text': '', 'done': True})}\n\n"
+            
+    return Response(stream_with_context(generate()), mimetype='text/event-stream')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

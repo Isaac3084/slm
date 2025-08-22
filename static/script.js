@@ -117,20 +117,52 @@ document.addEventListener('DOMContentLoaded', () => {
         chatBtn.disabled = true;
 
         try {
-            const res = await fetch('/api/chat', {
+            const res = await fetch('/api/chat_stream', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: text })
             });
-            const data = await res.json();
+            
             const botMsg = document.createElement('div');
             botMsg.className = 'chat-msg bot';
-            botMsg.textContent = res.ok ? data.reply : (data.error || 'Error');
+            botMsg.textContent = '';
             chatBox.appendChild(botMsg);
+            
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let doneReading = false;
+            
+            while (!doneReading) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n\n');
+                
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const dataStr = line.replace('data: ', '');
+                        if (!dataStr) continue;
+                        
+                        try {
+                            const data = JSON.parse(dataStr);
+                            if (data.text) {
+                                botMsg.textContent += data.text;
+                                chatBox.scrollTop = chatBox.scrollHeight;
+                            }
+                            if (data.done) {
+                                doneReading = true;
+                            }
+                        } catch (e) {
+                            console.error("Parse error", e);
+                        }
+                    }
+                }
+            }
         } catch (err) {
             const errMsg = document.createElement('div');
             errMsg.className = 'chat-msg system';
-            errMsg.textContent = 'Not available yet — needs instruction tuning.';
+            errMsg.textContent = 'Streaming error or model unavailable.';
             chatBox.appendChild(errMsg);
         } finally {
             chatBtn.disabled = false;
