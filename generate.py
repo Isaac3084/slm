@@ -40,3 +40,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     generate_text(args.prompt, args.tokens)
+
+# Note: Throughput tracking added for performance monitoring
