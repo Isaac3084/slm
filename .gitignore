@@ -28,4 +28,4 @@ corpus.txt
 Thumbs.db
 
 # Stress test
-stress_test.py
+stress_test.py\n# Linting\n.flake8\n
