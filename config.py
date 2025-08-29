@@ -15,3 +15,4 @@ class ModelConfig:
     batch_size: int = 8 # fits 6GB VRAM with block_size=512
     grad_accum_steps: int = 4 # effective batch = 8 * 4 = 32
     device: str = 'cuda' # or 'cpu'
+\n# 384 embed dim provides good trade-off for 6 layers\n
