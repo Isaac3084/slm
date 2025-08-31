@@ -1,3 +1,4 @@
+from logger import logger
 import math
 import torch
 import torch.optim as optim
@@ -20,23 +21,23 @@ def train():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     config.device = str(device)
     
-    print(f"Config: {config}")
+    logger.info(f"Config: {config}")
     model = SmallLanguageModel(config).to(device)
     
     total_params = sum(p.numel() for p in model.parameters())
-    print(f"Parameters: {total_params/1e6:.2f}M")
+    logger.info(f"Parameters: {total_params/1e6:.2f}M")
     
     optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
     
     dataloader = get_dataloader('train.bin', config.block_size, config.batch_size, stride=128)
     
     max_steps = len(dataloader) * config.epochs
-    print(f"Total steps: {max_steps}, Warmup: {config.warmup_steps}")
+    logger.info(f"Total steps: {max_steps}, Warmup: {config.warmup_steps}")
     
     model.train()
     global_step = 0
     
-    print("Starting training...\n")
+    logger.info("Starting training...\n")
     for epoch in range(1, config.epochs + 1):
         total_loss = 0
         n_batches = 0
@@ -72,11 +73,11 @@ def train():
             pbar.set_postfix({'loss': f"{actual_loss:.4f}", 'lr': f"{lr:.2e}"})
         
         avg_loss = total_loss / n_batches
-        print(f"Epoch {epoch} | Avg Loss: {avg_loss:.4f} | LR: {lr:.2e}")
+        logger.info(f"Epoch {epoch} | Avg Loss: {avg_loss:.4f} | LR: {lr:.2e}")
         
         torch.save(model.state_dict(), f"slm_epoch_{epoch}.pt")
     
-    print(f"\nTraining complete. Final loss: {avg_loss:.4f}")
+    logger.info(f"\nTraining complete. Final loss: {avg_loss:.4f}")
 
 if __name__ == "__main__":
     train()
