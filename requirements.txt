@@ -5,3 +5,4 @@ tiktoken
 tqdm
 numpy
 flask
+\n# Python 3.10+\n
