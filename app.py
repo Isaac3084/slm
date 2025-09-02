@@ -1,3 +1,4 @@
+from logger import logger
 import os
 import torch
 import tiktoken
@@ -19,7 +20,7 @@ fallback_path = f"slm_epoch_10.pt"
 if os.path.exists(checkpoint_path):
     state = torch.load(checkpoint_path, map_location=device, weights_only=True)
     model.load_state_dict(state)
-    print(f"Loaded CHAT model weights from {checkpoint_path}")
+    logger.info(f"Loaded CHAT model weights from {checkpoint_path}")
 elif os.path.exists(fallback_path):
     state = torch.load(fallback_path, map_location=device, weights_only=True)
     # Filter out keys with shape mismatches
@@ -28,11 +29,11 @@ elif os.path.exists(fallback_path):
     skipped = [k for k in state if k not in filtered]
     model.load_state_dict(filtered, strict=False)
     if skipped:
-        print(f"Loaded base weights (partial) — skipped {skipped} due to shape mismatch. Retrain needed.")
+        logger.info(f"Loaded base weights (partial) — skipped {skipped} due to shape mismatch. Retrain needed.")
     else:
-        print(f"Loaded BASE weights from {fallback_path}")
+        logger.info(f"Loaded BASE weights from {fallback_path}")
 else:
-    print("Warning: No trained weights found. Using random weights.")
+    logger.info("Warning: No trained weights found. Using random weights.")
 
 model.eval()
 
