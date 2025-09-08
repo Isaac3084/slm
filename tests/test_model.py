@@ -6,3 +6,5 @@ def test_rmsnorm():
     x = torch.randn(2, 10, 384)
     out = norm(x)
     assert out.shape == x.shape
+
+# TODO: Add CausalSelfAttention tests here
