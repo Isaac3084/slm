@@ -31,3 +31,4 @@ class MemmapDataset(Dataset):
 def get_dataloader(data_file, block_size, batch_size, stride=1, shuffle=True):
     dataset = MemmapDataset(data_file, block_size, stride=stride)
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, pin_memory=True, num_workers=0)
+\n# Yield abstraction complete\n
