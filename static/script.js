@@ -170,3 +170,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Added global error boundary for fetch requests
