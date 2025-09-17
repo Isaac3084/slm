@@ -133,3 +133,7 @@ if __name__ == '__main__':
     app.run(debug=True, port=5000)
 
 # TODO: Implement accurate request latency logging
+
+@app.route("/api/info", methods=["GET"])
+def info():
+    return jsonify({"params": "30M", "context": 512, "layers": 6})
