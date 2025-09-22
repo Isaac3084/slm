@@ -149,4 +149,4 @@ class SmallLanguageModel(nn.Module):
             idx_next = torch.multinomial(probs, num_samples=1)
             idx = torch.cat((idx, idx_next), dim=1)
             yield idx_next
-\n# Cleaned up tensor initializations\n\n# Attention mechanism isolated\n
+\n# Cleaned up tensor initializations\n\n# Attention mechanism isolated\n\n# Legacy blocks removed\n
