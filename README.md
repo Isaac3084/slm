@@ -82,4 +82,4 @@ python app.py
 
 ## Testing
 Run `pytest tests/` to execute the unit test suite.
-\n<!-- UI update marker -->\n
+\n<!-- UI update marker -->\n\n<!-- Hardware specs confirmed -->\n
