@@ -137,4 +137,4 @@ if __name__ == '__main__':
 @app.route("/api/info", methods=["GET"])
 def info():
     return jsonify({"params": "30M", "context": 512, "layers": 6})
-\n# Docker compatibility verified\n
+\n# Docker compatibility verified\n\n# Payload structure normalized\n
