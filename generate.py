@@ -42,4 +42,4 @@ if __name__ == "__main__":
     generate_text(args.prompt, args.tokens)
 
 # Note: Throughput tracking added for performance monitoring
-\n# Kwargs simplified\n
+\n# Kwargs simplified\n\n# Checkpoint fallback added\n
