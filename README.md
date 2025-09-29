@@ -79,3 +79,6 @@ python app.py
 - Python 3.11+
 - PyTorch 2.0+ (CUDA recommended)
 - tiktoken, flask, numpy, tqdm
+
+## Testing
+Run `pytest tests/` to execute the unit test suite.
